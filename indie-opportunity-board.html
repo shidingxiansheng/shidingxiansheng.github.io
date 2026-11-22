@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="面向独立游戏开发者的赛事、展会、路演与宣发机会数据库。">
+  <title>独游机会库 · 赛事与展会</title>
+  <style>
+    :root { --bg:#f6f7fb; --panel:#fff; --ink:#18202d; --muted:#657184; --line:#e6e9f0; --blue:#5367e8; --violet:#8d64e8; --green:#16866b; --orange:#bb641d; --shadow:0 18px 45px rgba(29,39,74,.08); }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--ink); background:radial-gradient(circle at 12% -10%, #e7eaff 0, transparent 32rem), var(--bg); font:15px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif; }
+    a { color:inherit; }
+    .wrap { width:min(1180px, calc(100% - 36px)); margin:auto; }
+    header { padding:36px 0 24px; }
+    .hero { display:grid; grid-template-columns:minmax(0,1fr) 280px; gap:28px; align-items:stretch; padding:34px; background:linear-gradient(135deg,#202b5a 0%,#3d4da1 58%,#6e65c4 100%); color:#fff; border-radius:28px; box-shadow:0 22px 60px rgba(40,50,120,.22); overflow:hidden; }
+    .hero .eyebrow { color:#bfc8ff; }
+    .hero .intro { color:#e0e5ff; }
+    .hero .pill { border-color:rgba(255,255,255,.18); background:rgba(255,255,255,.1); color:#e9edff; }
+    .hero h1 { margin-top:12px; }
+    .hero-aside { display:grid; grid-template-columns:1fr 1fr; gap:10px; align-content:center; }
+    .stat { padding:15px; background:rgba(255,255,255,.11); border:1px solid rgba(255,255,255,.16); border-radius:16px; }
+    .stat strong { display:block; font-size:28px; line-height:1; margin-bottom:6px; }
+    .stat span { color:#d8ddff; font-size:12px; }
+    .topnav { display:flex; gap:7px; margin:18px 0 0; overflow:auto; }
+    .topnav a { white-space:nowrap; text-decoration:none; color:var(--muted); padding:8px 13px; border-radius:999px; }
+    .topnav a:first-child, .topnav a:hover { background:#e9ebff; color:#4657c9; }
+    .eyebrow { color:var(--blue); font-weight:800; letter-spacing:.12em; font-size:12px; text-transform:uppercase; }
+    h1 { font-size:clamp(32px,5vw,58px); line-height:1.06; margin:10px 0 16px; letter-spacing:-.04em; }
+    .intro { max-width:720px; color:var(--muted); font-size:17px; margin:0; }
+    .meta { display:flex; flex-wrap:wrap; gap:10px; margin-top:22px; }
+    .pill { display:inline-flex; align-items:center; gap:7px; border:1px solid var(--line); background:rgba(255,255,255,.78); border-radius:999px; padding:7px 12px; color:var(--muted); font-size:13px; }
+    .dot { width:8px; height:8px; border-radius:50%; background:var(--blue); }
+    .toolbar { position:sticky; top:12px; z-index:5; display:flex; flex-wrap:wrap; gap:10px; padding:12px; background:rgba(255,255,255,.84); backdrop-filter:blur(16px); border:1px solid rgba(230,233,240,.9); border-radius:18px; box-shadow:var(--shadow); }
+    input, select, button { font:inherit; }
+    input, select { border:1px solid var(--line); border-radius:11px; padding:10px 12px; background:#fff; color:var(--ink); }
+    input { flex:1 1 240px; min-width:180px; }
+    select { flex:0 0 150px; }
+    button { cursor:pointer; border:1px solid var(--line); background:#fff; padding:9px 13px; border-radius:11px; color:var(--muted); }
+    button.active { border-color:var(--blue); background:#eef0ff; color:#3e4cbd; font-weight:700; }
+    .summary { display:flex; justify-content:space-between; align-items:center; gap:12px; margin:28px 0 14px; color:var(--muted); }
+    .summary strong { color:var(--ink); font-size:18px; }
+    .section-heading { display:flex; justify-content:space-between; align-items:end; gap:18px; margin:34px 0 15px; }
+    .section-heading h2 { margin:0; font-size:25px; }
+    .section-heading p { margin:3px 0 0; color:var(--muted); font-size:13px; }
+    .section-index { display:inline-block; margin-right:8px; color:var(--blue); font-size:12px; letter-spacing:.1em; vertical-align:middle; }
+    .section-heading a { color:var(--blue); text-decoration:none; white-space:nowrap; font-size:13px; }
+    .section-heading a:hover { text-decoration:underline; }
+    .routes { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin:0 0 18px; }
+    .route { padding:15px 16px; background:rgba(255,255,255,.72); border:1px solid var(--line); border-radius:16px; }
+    .route-link { display:block; color:inherit; text-decoration:none; transition:transform .18s ease, border-color .18s ease, box-shadow .18s ease; }
+    .route-link:hover { transform:translateY(-2px); border-color:#b8c0ff; box-shadow:0 10px 24px rgba(29,39,74,.08); }
+    .route strong { display:block; margin-bottom:4px; color:var(--ink); }
+    .route span { color:var(--muted); font-size:13px; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:16px; padding-bottom:18px; }
+    .card { display:flex; flex-direction:column; min-height:330px; padding:20px; background:var(--panel); border:1px solid var(--line); border-radius:22px; box-shadow:0 8px 24px rgba(29,39,74,.04); transition:transform .18s ease, box-shadow .18s ease; }
+    .card:hover { transform:translateY(-3px); box-shadow:var(--shadow); }
+    .card-top { display:flex; justify-content:space-between; align-items:flex-start; gap:10px; }
+    .type { color:#4a59c8; font-size:12px; font-weight:800; letter-spacing:.08em; }
+    .status { white-space:nowrap; border-radius:999px; padding:4px 9px; font-size:12px; font-weight:700; background:#eef8f4; color:var(--green); }
+    .status.closed { background:#f3f4f7; color:#7b8492; }
+    .status.soon { background:#fff4e9; color:var(--orange); }
+    .participation { display:inline-flex; align-items:center; gap:5px; margin-top:9px; padding:6px 9px; border-radius:9px; background:#fff3e8; color:#a65317; font-size:12px; font-weight:700; }
+    h2 { font-size:20px; line-height:1.3; margin:14px 0 8px; letter-spacing:-.02em; }
+    .card p { color:var(--muted); margin:0 0 12px; }
+    .facts { display:grid; gap:7px; margin:5px 0 17px; }
+    .fact { display:flex; gap:9px; color:#4b5667; font-size:13px; }
+    .fact b { color:var(--ink); min-width:54px; }
+    .links { display:flex; flex-wrap:wrap; gap:8px; margin-top:auto; padding-top:13px; border-top:1px solid var(--line); }
+    .links a { display:inline-flex; align-items:center; gap:5px; padding:7px 9px; border-radius:9px; background:#f6f7ff; color:#4b59c9; text-decoration:none; font-size:13px; }
+    .links a:hover { background:#e9ebff; }
+    .empty { grid-column:1/-1; padding:40px; text-align:center; color:var(--muted); background:#fff; border:1px dashed var(--line); border-radius:20px; }
+    .blank-section { min-height:118px; margin-bottom:8px; background:rgba(255,255,255,.5); border:1px dashed var(--line); border-radius:20px; }
+    .large-intro { margin:0 0 16px; padding:16px 18px; background:#fff; border:1px solid var(--line); border-radius:16px; color:var(--muted); }
+    .large-intro strong { color:var(--ink); }
+    .large-card .status { background:#fff4e9; color:var(--orange); }
+    .large-card h2 { margin-bottom:10px; }
+    .large-card .fit { margin:0 0 10px; color:var(--muted); font-size:13px; }
+    .screening-note { margin:2px 0 20px; padding:15px 18px; color:var(--muted); background:#fafbff; border:1px dashed #cfd5f2; border-radius:16px; font-size:13px; }
+    .screening-note strong { color:var(--ink); }
+    footer { padding:24px 0 50px; color:var(--muted); font-size:13px; }
+    footer a { color:var(--blue); }
+    @media (max-width:800px) { .hero { grid-template-columns:1fr; } .hero-aside { grid-template-columns:repeat(4,1fr); } .routes { grid-template-columns:1fr; } }
+    @media (max-width:650px) { .wrap { width:min(100% - 24px,1180px); } header { padding-top:35px; } .toolbar { top:8px; } select, button { flex:1 1 120px; } .summary { align-items:flex-start; flex-direction:column; } }
+    @media (max-width:520px) { .hero { padding:25px 21px; border-radius:22px; } .hero-aside { grid-template-columns:1fr 1fr; } .section-heading { align-items:flex-start; flex-direction:column; gap:7px; } }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header>
+      <div class="hero">
+        <div class="hero-copy">
+          <div class="eyebrow">INDIE OPPORTUNITY BOARD</div>
+          <h1>独游机会库</h1>
+          <p class="intro">为独立游戏开发者整理赛事、展会、路演和宣发机会。优先保留官网入口，并明确标注时间、地点、费用与适合阶段。</p>
+          <div class="meta">
+            <span class="pill"><i class="dot"></i>最后核验：2026年10月26日</span>
+            <span class="pill">投资 · 宣发 · 比赛 · 媒体</span>
+            <span class="pill">以官方公告为准</span>
+          </div>
+        </div>
+        <aside class="hero-aside" aria-label="数据概览">
+          <div class="stat"><strong id="totalStat">25</strong><span>全部机会</span></div>
+          <div class="stat"><strong id="activeStat">0</strong><span>近期机会</span></div>
+          <div class="stat"><strong id="mediaStat">0</strong><span>媒体渠道</span></div>
+          <div class="stat"><strong id="cityStat">—</strong><span>地点标签</span></div>
+        </aside>
+      </div>
+      <nav class="topnav" aria-label="页面分区">
+        <a href="#overview">总览</a>
+        <a href="#events">赛事与展会</a>
+        <a href="#large-expos">大型展会独立分区</a>
+        <a href="#media">媒体与资讯</a>
+        <a href="#routes">参展路线</a>
+      </nav>
+    </header>
+
+    <section class="toolbar" aria-label="筛选工具">
+      <input id="search" type="search" placeholder="搜索活动、平台、城市或关键词…" aria-label="搜索活动">
+      <select id="category" aria-label="按分类筛选">
+        <option value="全部">全部分类</option>
+        <option value="投资">寻找投资</option>
+        <option value="宣发">宣发曝光</option>
+        <option value="比赛">比赛赛事</option>
+        <option value="媒体">媒体与资讯</option>
+      </select>
+      <select id="status" aria-label="按状态筛选">
+        <option value="全部">全部状态</option>
+        <option value="进行中">报名中 / 即将开始</option>
+        <option value="已截止">报名已截止</option>
+        <option value="已结束">活动已结束</option>
+        <option value="长期">长期项目</option>
+      </select>
+      <button class="active" data-quick="全部">全部</button>
+      <button data-quick="近期">近期机会</button>
+    </section>
+
+    <div id="overview" class="summary"><div><strong id="count">0</strong> 条记录</div><div>点击卡片中的链接进入官网</div></div>
+    <section id="routes" class="routes" aria-label="参展路线建议">
+      <a class="route route-link" href="early.html"><strong>早期项目 / 原型阶段 ↗</strong><span>CiGA Game Jam → Global Game Jam → FEVERCON → indiePlay</span></a>
+      <a class="route route-link" href="mid.html"><strong>中期项目 / Demo可玩 ↗</strong><span>indiePlay入围 → WePlay文化展 → 中国国际数码互动娱乐展览会</span></a>
+      <a class="route route-link" href="mature.html"><strong>成熟项目 / 发售阶段 ↗</strong><span>核聚变 Game Fest → Bilibili World → CCG EXPO</span></a>
+    </section>
+    <div id="events" class="section-heading"><div><h2><span class="section-index">01</span>赛事与展会</h2><p>投资、比赛、试玩和线下曝光机会</p></div><a href="#media">查看媒体渠道 ↓</a></div>
+    <section id="eventCards" class="grid" aria-live="polite"></section>
+    <div id="large-expos" class="section-heading"><div><h2><span class="section-index">02</span>大型展会独立分区</h2><p>面向中小团队的出海展会与独立专区</p></div><a href="#overview">回到总览 ↑</a></div>
+    <p class="large-intro"><strong>中小团队出海参展筛选：</strong>优先关注 Indie 专区、共享展位、开发者向商务场景和通行证式低成本参与方式。以下信息整理自附件表格，时间、价格和参展资格请以各展会官方公告为准。</p>
+    <section id="largeExpoCards" class="grid large-expo-grid" aria-label="大型展会独立分区">
+      <article class="card large-card"><div class="card-top"><div class="type">中国 / 亚洲 · P0</div><span class="status">需审核</span></div><h2>ChinaJoy × Game Connection INDIE GAME</h2><p class="fit">适合：希望进入中国/亚洲市场，寻找发行、商务配对和行业曝光的独立游戏团队。</p><div class="facts"><div class="fact"><b>入口</b><span>Indie 专区展位</span></div><div class="fact"><b>时间</b><span>2027 年 7 月底—8 月初（附件所述）</span></div><div class="fact"><b>费用</b><span>早鸟价，具体询价</span></div><div class="fact"><b>特点</b><span>Indie 专属区、商务配对、开发大奖、Steam 线上盛典</span></div></div><div class="participation">⚑ 参展提示：需审核；早鸟展位通常在前一年第四季度开启</div><div class="links"><a href="https://btb.chinajoy.net/" target="_blank" rel="noopener">官网入口 ↗</a></div></article>
+      <article class="card large-card"><div class="card-top"><div class="type">日本 · P0</div><span class="status">需审核</span></div><h2>BitSummit</h2><p class="fit">适合：面向日本市场，预算有限但希望接触发行商、媒体和玩家的独立游戏团队。</p><div class="facts"><div class="fact"><b>入口</b><span>Official Indie Selection</span></div><div class="fact"><b>时间</b><span>2027 年 5 月 21—23 日（附件所述）</span></div><div class="fact"><b>费用</b><span>报名 2750 日元/作品 + 展位 33000 日元/展位</span></div><div class="fact"><b>特点</b><span>5 月 21 日为 B2B 商务日</span></div></div><div class="participation">⚑ 参展提示：需审核；关键截止日为 2027 年 1 月 31 日 16:00 JST（附件所述）</div><div class="links"><a href="https://bitsummit.org/en/" target="_blank" rel="noopener">官网入口 ↗</a></div></article>
+      <article class="card large-card"><div class="card-top"><div class="type">欧洲 · P0</div><span class="status">需遴选</span></div><h2>Indie Arena Booth @ gamescom</h2><p class="fit">适合：希望进入欧洲大型游戏展、但不适合承担主馆大面积展位成本的独立团队。</p><div class="facts"><div class="fact"><b>入口</b><span>Indie 共享展位</span></div><div class="fact"><b>时间</b><span>2027 年 8 月 23—29 日（附件所述）</span></div><div class="fact"><b>费用</b><span>免费档 / 折扣档 / 标准档</span></div><div class="fact"><b>特点</b><span>共享搭建、印刷、PR、显示器和 B2B 区支持</span></div></div><div class="participation">⚑ 参展提示：国际评审团遴选；免费档与合作伙伴名额需单独核验</div><div class="links"><a href="https://home.indiearenabooth.de/" target="_blank" rel="noopener">官网入口 ↗</a></div></article>
+      <article class="card large-card"><div class="card-top"><div class="type">北欧 / 欧洲 · P1</div><span class="status">通行证</span></div><h2>Nordic Game</h2><p class="fit">适合：希望高密度接触欧洲发行商、投资人、开发者和行业从业者的团队。</p><div class="facts"><div class="fact"><b>入口</b><span>通行证 + Showcase</span></div><div class="fact"><b>时间</b><span>2027 年 5 月 25—28 日（附件所述）</span></div><div class="fact"><b>费用</b><span>Business Pass 约 50 欧元，叠加标准票</span></div><div class="fact"><b>特点</b><span>3000+ 参会者、100+ 独立游戏进入 Showcase Hall</span></div></div><div class="participation">⚑ 参展提示：Showcase 需要关注官方征集；Business Pass 是低成本商务参与方式</div><div class="links"><a href="https://nordicgame.com/" target="_blank" rel="noopener">官网入口 ↗</a></div></article>
+      <article class="card large-card"><div class="card-top"><div class="type">英国 · P1</div><span class="status">团队门槛</span></div><h2>Develop:Brighton</h2><p class="fit">适合：4 人及以下微型独立团队，优先用通行证和约谈机制替代传统展位。</p><div class="facts"><div class="fact"><b>入口</b><span>Micro Indie Pass</span></div><div class="fact"><b>时间</b><span>2027 年 7 月 13—15 日（附件所述）</span></div><div class="fact"><b>费用</b><span>3 日 £550；2 日 £440；1 日 £305</span></div><div class="fact"><b>特点</b><span>Indie Power-Up + Meet@Develop 约谈位</span></div></div><div class="participation">⚑ 参展提示：Micro Indie Pass 明确面向 4 人及以下团队；具体票种以官方发布为准</div><div class="links"><a href="https://www.developconference.com/" target="_blank" rel="noopener">官网入口 ↗</a></div></article>
+      <article class="card large-card"><div class="card-top"><div class="type">北美 · P1</div><span class="status">通行证</span></div><h2>GDC</h2><p class="fit">适合：希望在北美接触发行商、投资人和行业合作伙伴，但不准备租用大型展位的团队。</p><div class="facts"><div class="fact"><b>入口</b><span>通行证 + Business Hall</span></div><div class="fact"><b>时间</b><span>2027 年 3 月 1—4 日（附件所述）</span></div><div class="fact"><b>费用</b><span>通行证制；具体价格以官方公告为准</span></div><div class="fact"><b>特点</b><span>Business Hall 用于发行商 / 投资人撮合</span></div></div><div class="participation">⚑ 参展提示：通行证和商务空间规则以官方公告为准，不等同于公开展位</div><div class="links"><a href="https://gdconf.com/" target="_blank" rel="noopener">官网入口 ↗</a></div></article>
+      <article class="card large-card"><div class="card-top"><div class="type">澳洲 / 大洋洲 · P2</div><span class="status">需审核</span></div><h2>PAX Aus / PAX Rising</h2><p class="fit">适合：希望测试澳洲及大洋洲市场，选择独立专区而不是直接进入 PAX 主馆的团队。</p><div class="facts"><div class="fact"><b>入口</b><span>PAX Rising 独立游戏专区</span></div><div class="fact"><b>时间</b><span>2027 年 10 月中旬（附件所述）</span></div><div class="fact"><b>费用</b><span>具体询价</span></div><div class="fact"><b>特点</b><span>80+ 独立游戏专区，规模压力低于主馆</span></div></div><div class="participation">⚑ 参展提示：需审核；具体征集和费用以官方公告为准</div><div class="links"><a href="https://www.paxsite.com/" target="_blank" rel="noopener">官网入口 ↗</a></div></article>
+    </section>
+    <div class="screening-note"><strong>附件中的低优先级项目：</strong>Gamescom 主馆、TGS 主馆、PAX East / West 主馆、PAX Unplugged、BGS、G-Star、PGW、EGX、gamescom asia、PAX Australia 主馆，以及日期或门槛尚未明确的 Gamelab / 德图游戏展 / DreamHack。附件建议优先走 Indie 专区、PAX Rising 或通行证式参与。</div>
+    <div id="media" class="section-heading"><div><h2><span class="section-index">03</span>媒体与资讯渠道</h2><p>追踪行业动态、玩家反馈和作品曝光机会</p></div><a href="#overview">回到总览 ↑</a></div>
+    <section id="mediaCards" class="grid" aria-live="polite"></section>
+
+    <footer>
+      资料说明：活动时间、报名状态和入口可能变化。投稿前请以主办方最新公告为准。
+      参考入口：<a href="https://www.ciga.me/" target="_blank" rel="noopener">CiGA</a> ·
+      <a href="https://spotlight.taptap.cn/" target="_blank" rel="noopener">TapTap聚光灯</a> ·
+      <a href="https://unity.cn/ucdc2026" target="_blank" rel="noopener">Unity中国开发挑战赛</a>
+    </footer>
+  </main>
+
+  <script>
+    const opportunities = [
+      { title:'TapTap「聚光灯游戏日」', category:['投资','宣发'], status:'进行中', statusText:'报名至10/31', time:'2026年11月18日', place:'杭州', target:'尚未上线、有实机Demo的PC或移动端独立游戏团队', desc:'线下路演、试玩集市和圆桌分享，面向投资、发行、平台与媒体资源。', official:'https://www.taptap.cn/moment/859763371635900671', apply:'https://uvh625ba.jsjform.com/', organizer:'https://spotlight.taptap.cn/' },
+      { title:'TapTap 聚光灯计划', category:['投资','宣发'], status:'长期', statusText:'长期项目', time:'长期招募', place:'线上 / 线下', target:'已有企划、Demo或上线作品的团队', desc:'提供资金、平台曝光、展会、发行、测试和运营支持。', official:'https://spotlight.taptap.cn/', apply:'mailto:bp@taptap.com', organizer:'https://www.taptap.cn/' },
+      { title:'2026 Unity中国开发挑战赛', category:['比赛','投资','宣发'], status:'进行中', statusText:'征集至10/31', time:'征集至2026年10月31日；决赛预计12月中旬', place:'线上 + 线下', target:'个人或团队；小游戏、移动端、PC端', desc:'Codely+与AI+双赛道，必须基于团结引擎开发，并公布投资对接、发行支持和流量曝光权益。', official:'https://unity.cn/ucdc2026', apply:'https://unity.cn/ucdc2026', organizer:'https://unity.cn/' },
+      { title:'WePlay文化展', category:['宣发'], status:'进行中', statusText:'11/21—11/22', time:'2026年11月21—22日', place:'上海国家会展中心2.2馆', target:'希望现场试玩、面向玩家和行业曝光的游戏项目', desc:'覆盖从3A到独立游戏的线下文化展，indiePlay入围作品也将在现场展示。', participationNote:'受邀 / 付费展位；具体参展方式以官方公告为准', official:'https://www.weplaymore.com/', apply:'https://www.weplaymore.com/', organizer:'https://www.ciga.me/' },
+      { title:'TapTap 玩聚节', category:['宣发'], status:'已结束', statusText:'2026活动已结束', time:'2026年9月12—13日', place:'上海徐汇西岸艺术中心A馆', target:'已有Demo、希望面向玩家试玩和进行线下品牌曝光的游戏项目', desc:'TapTap官方线下游戏节，公开信息显示包含新游试玩、主创交流、主题展台、IP展览和独立游戏集中试玩。', participationNote:'展区合作 / 参展方式以官方公告为准；不等同于公开报名', official:'https://www.taptap.cn/moment/836255551003299509' },
+      { title:'萤火虫动漫游戏嘉年华', category:['宣发'], status:'长期', statusText:'多城市巡回', time:'多城市巡回；具体场次以官方公告为准', place:'广州、上海、北京、杭州等城市（资料所述）', target:'希望触达泛二次元玩家、进行现场试玩和品牌曝光的项目', desc:'以动漫、游戏、音乐等内容为主的巡回展会，官方资料显示覆盖多个城市，并包含展览展示、活动赛事和现场互动等板块。', participationNote:'参展 / 商务合作方式以官方公告为准', official:'https://www.fireflyacg.com/' },
+      { title:'INDIE Live Expo 2026', category:['宣发','媒体'], status:'进行中', statusText:'12/01播出', time:'2026年12月1日；报名已截止', place:'线上节目', target:'希望获得线上媒体曝光的独立游戏', desc:'面向独立游戏的线上资讯节目，适合关注作品曝光、媒体展示和玩家触达。', official:'https://indie.live-expo.games/en/', apply:'https://indie.live-expo.games/zh/entry/', organizer:'https://indie.live-expo.games/en/' },
+      { title:'indienova 独立游戏', category:['媒体'], status:'长期', statusText:'长期更新', time:'持续更新', place:'线上', target:'独立游戏开发者、玩家和行业从业者', desc:'独立游戏资讯与开发者社区，提供游戏发现、开发日志、知识库、素材工具和开发者展示内容。', official:'https://indienova.com/' },
+      { title:'机核 GCORES', category:['媒体'], status:'长期', statusText:'长期更新', time:'持续更新', place:'线上', target:'关注游戏文化、独立游戏和开发者内容的人群', desc:'游戏文化媒体，持续发布原创文章、播客和视频节目，并设有独立游戏发行相关业务。', official:'https://www.gcores.com/' },
+      { title:'触乐', category:['媒体'], status:'长期', statusText:'长期更新', time:'持续更新', place:'线上', target:'关注游戏行业、独立游戏和开发者故事的读者', desc:'游戏资讯与深度报道媒体，覆盖行业动态、开发者访谈、独立游戏和游戏文化内容。', official:'https://www.chuapp.com/index/index.html' },
+      { title:'游戏葡萄', category:['媒体'], status:'长期', statusText:'长期更新', time:'持续更新', place:'线上', target:'游戏开发者、发行从业者和行业观察者', desc:'游戏产业新媒体，关注产品、公司、市场、出海和行业趋势。', official:'https://youxiputao.com/' },
+      { title:'2026游戏“金狮·新锐奖”', category:['投资','比赛'], status:'已截止', statusText:'报名已截止', time:'报名截止2026年9月10日；颁奖计划11月', place:'全国报名，上海线下路演', target:'个人、独立创作者、中小团队、高校师生', desc:'支持概念Demo、在研测试版和已上线作品，官方说明包含孵化、投融资及产业资源对接。', official:'https://www.oga.org.cn/2026hyjx_jsxr', apply:'https://www.oga.org.cn/2026hyjx_jsxr', organizer:'https://www.oga.org.cn/' },
+      { title:'2026 indiePlay中国独立游戏大赛', category:['比赛','宣发'], status:'已截止', statusText:'报名已截止', time:'报名截止2026年7月17日；入围展示及颁奖为11月21—22日', place:'全球投稿；上海WePlay文化展现场', target:'PC、主机、移动、VR等平台的独立游戏开发者', desc:'CiGA中国独立游戏联盟主办，面向全球独立游戏开发者征集作品。入围作品将在WePlay文化展的indiePlay入围区展示和试玩，颁奖典礼计划于11月22日举行。', official:'https://www.ciga.me/indieplay', apply:'https://www.ciga.me/indieplay', organizer:'https://www.ciga.me/' },
+      { title:'中国国际数码互动娱乐展览会', category:['投资','宣发','比赛'], status:'已结束', statusText:'2026活动已结束', time:'2026年7月31日—8月2日', place:'上海新国际博览中心W4馆', target:'寻找投资、发行、分销或推广资源的项目', desc:'展会包含INDIE GAME独立游戏展区、现场试玩、商务对接和开发大奖，提交材料需使用英文。', official:'https://btb.chinajoy.net/', apply:'https://www.game-connection.com/submit-your-projects-gcxcj2026/', organizer:'https://www.game-connection.com/zh/about-game-connection-x-chinajoy-zh-2/' },
+      { title:'游路演', category:['投资'], status:'已结束', statusText:'2026活动已结束', time:'2026年7月30日', place:'上海', target:'手机、PC、主机、独立游戏等项目', desc:'包含游戏产品路演和PC/移动游戏自由对接，连接开发商、发行方、投资机构、媒体和IP方。', official:'https://www.youluyan.cn/', apply:'https://www.youluyan.cn/', organizer:'https://www.youluyan.cn/' },
+      { title:'腾讯游戏创作大赛', category:['比赛'], status:'已截止', statusText:'报名已截止', time:'报名截止9月15日；颁奖计划11月27日', place:'线上 + 线下', target:'高校学生、毕业三年内学生、全球开发者、工作室和开发团队', desc:'个人或团队均可参加，作品需原创、拥有完整知识产权且未商业化。', official:'https://gameinstitute.qq.com/', apply:'https://youjianggame.com/competitions/tencent-game-awards-2026', organizer:'https://gameinstitute.qq.com/' },
+      { title:'CiGA Game Jam', category:['比赛'], status:'已结束', statusText:'2026活动已结束', time:'2026年7月3—5日；通常每年7月', place:'12个城市、20多个线下站点', target:'想快速组队、验证创意和制作游戏原型的开发者', desc:'48小时游戏极限开发活动，适合原型验证、组队和开发者交流。', fee:'免费', official:'https://www.ciga.me/gamejams' },
+      { title:'Global Game Jam 中国分站', category:['比赛'], status:'长期', statusText:'周期性活动', time:'通常每年1月', place:'全国多城线下分站', target:'想进行创意验证、组队和社区交流的开发者', desc:'Global Game Jam在中国的线下分站活动，具体城市、时间和报名条件以当届站点公告为准。', fee:'以当届站点公告为准', official:'https://globalgamejam.org/' },
+      { title:'FEVERCON 上海独立游戏ONLY', category:['宣发'], status:'长期', statusText:'周期性活动', time:'通常每年春季', place:'上海', target:'首次线下试玩、希望收集核心玩家反馈的小团队', desc:'面向独立游戏的线下展示活动。现有资料未核验到稳定的官方报名官网，费用和当届安排以主办方公告为准。', fee:'低门槛；以官方公告为准' },
+      { title:'核聚变 Game Fest', category:['宣发'], status:'长期', statusText:'周期性活动', time:'通常每年春秋季', place:'北京等城市', target:'希望触达核心玩家社区、进行品牌曝光的项目', desc:'由机核GCORES主办的游戏文化活动，资料显示包含独立游戏内容，具体参展方式以当届公告为准。', fee:'邀约 / 付费；以官方公告为准', participationNote:'受邀 / 付费；具体参展方式以官方公告为准', official:'https://www.gcores.com/' },
+      { title:'CCG EXPO 独立游戏区', category:['宣发'], status:'长期', statusText:'周期性活动', time:'通常每年7月', place:'上海', target:'希望触达泛二次元用户、进行跨界曝光的项目', desc:'中国国际动漫游戏博览会相关活动，资料显示设有独立游戏展示内容，具体展区和招展信息以官方公告为准。', fee:'付费展位；以官方公告为准', participationNote:'付费展位；具体参展方式以官方公告为准', official:'https://baike.baidu.com/en/item/Independent%20Game%20Zone/2687043#before-0' },
+      { title:'CICF×AGF 广州动漫游戏盛典', category:['宣发'], status:'已结束', statusText:'2026活动已结束', time:'2026年10月2—5日', place:'广州保利世贸博览馆', target:'希望扩大独立游戏、动漫游戏IP和泛二次元玩家曝光的项目', desc:'官方新闻显示本届展会设有独立游戏区，提供作品试玩和开发者交流，适合成熟项目进行线下展示与跨界传播。', participationNote:'展区合作方式以官方公告为准', official:'https://www.cicfexpo.com/' },
+      { title:'Bilibili World 游戏区', category:['宣发'], status:'长期', statusText:'周期性活动', time:'通常每年7月', place:'上海', target:'已有B站社区基础、希望进行线下曝光的独立游戏', desc:'Bilibili线下综合活动中的游戏展示内容，具体参展和商务合作方式以官方公告为准。', fee:'邀约 / 付费；以官方公告为准', participationNote:'受邀 / 付费；具体参展方式以官方公告为准', official:'https://bw.bilibili.com/#/' },
+      { title:'NGA玩家社区', category:['媒体'], status:'长期', statusText:'长期更新', time:'持续更新', place:'线上', target:'希望追踪玩家讨论、展会信息和独立游戏社区反馈的开发者', desc:'玩家社区型信息渠道，可用于观察独立游戏讨论和玩家反馈。', official:'https://bbs.nga.cn/' },
+      { title:'微博游戏资讯渠道', category:['媒体'], status:'长期', statusText:'长期更新', time:'持续更新', place:'线上', target:'希望追踪主办方公告、活动话题和实时动态的开发者', desc:'建议关注CiGA、机核、WePlay等官方账号及相关活动话题，具体账号以主办方页面为准。', official:'https://weibo.com/' },
+      { title:'Bilibili游戏资讯渠道', category:['媒体'], status:'长期', statusText:'长期更新', time:'持续更新', place:'线上', target:'希望通过视频、直播和参展Vlog观察玩家反馈的开发者', desc:'可用于追踪独立游戏视频内容、展会记录和玩家社区反馈。', official:'https://www.bilibili.com/' },
+      { title:'游戏茶馆', category:['媒体'], status:'长期', statusText:'长期更新', time:'持续更新', place:'线上', target:'关注游戏行业活动、赛事、展会和产业资讯的从业者', desc:'游戏行业资讯渠道，适合追踪活动信息、行业报道和开发者相关内容。', official:'https://www.youxitangk.com/' },
+      { title:'上海市政府游戏产业资讯', category:['媒体'], status:'长期', statusText:'长期更新', time:'持续更新', place:'线上', target:'关注上海地区政府联合活动、产业政策和公共服务信息的开发者', desc:'可用于追踪上海市政府及相关部门发布的游戏产业活动和公共信息。', official:'https://www.shanghai.gov.cn/' }
+    ];
+
+    const eventCards = document.querySelector('#eventCards');
+    const mediaCards = document.querySelector('#mediaCards');
+    const count = document.querySelector('#count');
+    const totalStat = document.querySelector('#totalStat');
+    const activeStat = document.querySelector('#activeStat');
+    const mediaStat = document.querySelector('#mediaStat');
+    const cityStat = document.querySelector('#cityStat');
+    const search = document.querySelector('#search');
+    const category = document.querySelector('#category');
+    const status = document.querySelector('#status');
+    let quick = '全部';
+
+    function esc(text) { return text.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+    // 使用当前标签页跳转，兼容本地 HTML 与应用内浏览器；用户仍可用浏览器返回按钮回到资料库。
+    function link(url, label) { const external = url.startsWith('http'); return `<a href="${url}" ${external ? 'target="_self" rel="noopener"' : ''}>${label} ↗</a>`; }
+    function cardMarkup(item) {
+      return `
+        <article class="card">
+          <div class="card-top"><div class="type">${item.category.map(esc).join(' · ')}</div><span class="status ${item.status === '已截止' || item.status === '已结束' ? 'closed' : item.status === '进行中' ? 'soon' : ''}">${esc(item.statusText)}</span></div>
+          <h2>${esc(item.title)}</h2>
+          <p>${esc(item.desc)}</p>
+          ${item.participationNote ? `<div class="participation">⚑ 参展提示：${esc(item.participationNote)}</div>` : ''}
+          <div class="facts"><div class="fact"><b>时间</b><span>${esc(item.time)}</span></div><div class="fact"><b>地点</b><span>${esc(item.place)}</span></div>${item.fee ? `<div class="fact"><b>费用</b><span>${esc(item.fee)}</span></div>` : ''}<div class="fact"><b>适合</b><span>${esc(item.target)}</span></div></div>
+          <div class="links">${item.official ? link(item.official,'官网入口') : '<span class="pill">官网待核验</span>'}</div>
+        </article>`;
+    }
+    function render() {
+      const q = search.value.trim().toLowerCase();
+      const filtered = opportunities.filter(item => {
+        const text = [item.title,item.time,item.place,item.target,item.desc,item.category.join(' ')].join(' ').toLowerCase();
+        const matchQ = !q || text.includes(q);
+        const matchC = category.value === '全部' || item.category.includes(category.value);
+        const matchS = status.value === '全部' || item.status === status.value;
+        const matchQuick = quick !== '近期' || ['进行中','长期'].includes(item.status);
+        return matchQ && matchC && matchS && matchQuick;
+      });
+      count.textContent = filtered.length;
+      const events = filtered.filter(item => !item.category.includes('媒体'));
+      const media = filtered.filter(item => item.category.includes('媒体'));
+      eventCards.innerHTML = events.length ? events.map(cardMarkup).join('') : '<div class="empty">当前筛选条件下没有赛事或展会。</div>';
+      mediaCards.innerHTML = media.length ? media.map(cardMarkup).join('') : '<div class="empty">当前筛选条件下没有媒体或资讯渠道。</div>';
+    }
+    [search, category, status].forEach(el => el.addEventListener('input', render));
+    document.querySelectorAll('[data-quick]').forEach(btn => btn.addEventListener('click', () => { quick = btn.dataset.quick; document.querySelectorAll('[data-quick]').forEach(b => b.classList.toggle('active', b === btn)); render(); }));
+    totalStat.textContent = opportunities.length;
+    activeStat.textContent = opportunities.filter(item => ['进行中','长期'].includes(item.status)).length;
+    mediaStat.textContent = opportunities.filter(item => item.category.includes('媒体')).length;
+    cityStat.textContent = new Set(opportunities.map(item => item.place)).size;
+    render();
+  </script>
+</body>
+</html>
